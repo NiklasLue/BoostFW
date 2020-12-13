@@ -6,6 +6,7 @@ from numpy.linalg import norm
 seterr(all='warn')
 warnings.filterwarnings('error')
 
+
 class FW:
     def __init__(self, func, grad_func, points, minimizer=None):
         self.func = func
@@ -21,7 +22,7 @@ class FW:
 
     def step_func(self, t):
         return 2/(t+2)
-    
+
     def boostfw(self, y, delta, T=10, K=10):
         if self.minimizer is not None:
             error = []
