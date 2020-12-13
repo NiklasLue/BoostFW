@@ -23,6 +23,14 @@ class FW:
     def step_func(self, t):
         return 2/(t+2)
 
+    def fw(self, x, T=10):
+        for t in range(T):
+            grad_x = self.grad_func(x)
+            v = self.points[argmax([dot(grad_x, v) for v in self.points])]
+            x = x + self.step_func(t) * (v - x)
+
+        return x
+
     def boostfw(self, y, delta, T=10, K=10):
         if self.minimizer is not None:
             error = []
