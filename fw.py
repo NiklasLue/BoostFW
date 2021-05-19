@@ -23,13 +23,29 @@ class FW:
     def step_func(self, t):
         return 2/(t+2)
 
-    def fw(self, x, T=10):
-        for t in range(T):
+    def fw(self, x, delta=None, T=10):
+        if self.minimizer is not None:
+            error = []
+        stop = False
+        i = 0
+        while not stop:
             grad_x = self.grad_func(x)
-            v = self.points[argmax([dot(grad_x, v) for v in self.points])]
-            x = x + self.step_func(t) * (v - x)
+            # print(f"Gradient at {x}: {grad_x}")
+            v = self.points[argmin([dot(grad_x, v) for v in self.points])]
+            # print(f"LMO solution: {v}")
+            x = x + self.step_func(i) * (v - x)
+            # print(f"Next iterate: {x}")
+            if self.minimizer is not None:
+                error.append(norm(x - self.minimizer))
+                if delta:
+                    if error[-1] < delta:
+                        stop = True
+            if not delta:
+                if i == T:
+                    stop = True
+            i += 1
 
-        return x
+        return {'x': x, 'error': error, 'iterations': i} if self.minimizer is not None else {'x': x}
 
     def boostfw(self, y, delta, T=10, K=10):
         if self.minimizer is not None:
